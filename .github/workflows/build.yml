@@ -1,0 +1,31 @@
+name: build-and-smoke-test
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install build dependencies
+        run: sudo apt-get update && sudo apt-get install -y gcc g++ make libomp-dev openmpi-bin libopenmpi-dev
+      - name: Build OpenMP and MPI targets
+        run: make all mpi
+      - name: Run correctness smoke test
+        run: make test
+
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build with MinGW if available
+        shell: pwsh
+        run: |
+          if (Get-Command gcc -ErrorAction SilentlyContinue) {
+            gcc --version
+            gcc -O2 -std=c11 -Wall -Wextra -Wpedantic -fopenmp -Isrc src/ac_bench.c -o build_ac_bench.exe
+          } else {
+            Write-Host "MinGW is not preinstalled; source build is documented in README.md."
+          }
