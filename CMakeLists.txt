@@ -1,0 +1,41 @@
+cmake_minimum_required(VERSION 3.20)
+project(aho_corasick_parallel C)
+
+set(CMAKE_C_STANDARD 11)
+set(CMAKE_C_STANDARD_REQUIRED ON)
+set(CMAKE_C_EXTENSIONS ON)
+find_package(OpenMP REQUIRED)
+
+add_compile_options(-Wall -Wextra -Wpedantic)
+
+add_executable(ac_bench src/ac_bench.c)
+target_link_libraries(ac_bench PRIVATE OpenMP::OpenMP_C)
+target_include_directories(ac_bench PRIVATE src)
+
+add_executable(ac_worker_diagnostic src/ac_worker_diagnostic.c)
+target_link_libraries(ac_worker_diagnostic PRIVATE OpenMP::OpenMP_C)
+target_include_directories(ac_worker_diagnostic PRIVATE src)
+
+if(WIN32)
+  add_executable(system_probe src/system_probe.c)
+else()
+  add_executable(system_probe src/system_probe_posix.c)
+endif()
+
+option(AC_ENABLE_MPI "Build MPI executables" ON)
+if(AC_ENABLE_MPI)
+  find_package(MPI COMPONENTS C)
+  if(MPI_C_FOUND)
+    add_executable(ac_bench_mpi src/ac_bench.c)
+    target_compile_definitions(ac_bench_mpi PRIVATE WITH_MPI)
+    target_link_libraries(ac_bench_mpi PRIVATE OpenMP::OpenMP_C MPI::MPI_C)
+    target_include_directories(ac_bench_mpi PRIVATE src)
+
+    add_executable(ac_mpi_layout src/ac_mpi_layout.c)
+    target_compile_definitions(ac_mpi_layout PRIVATE WITH_MPI)
+    target_link_libraries(ac_mpi_layout PRIVATE OpenMP::OpenMP_C MPI::MPI_C)
+    target_include_directories(ac_mpi_layout PRIVATE src)
+  else()
+    message(STATUS "MPI not found; MPI executables will not be built")
+  endif()
+endif()

@@ -1,0 +1,20 @@
+cff-version: 1.2.0
+title: "Parallel Aho-Corasick Matching"
+message: "If this repository supports your work, please cite the associated research paper."
+type: software
+authors:
+  - family-names: Shah
+    given-names: Muhammad Jalal
+  - family-names: Shahzad
+    given-names: Muhammad Umar
+  - family-names: Tariq
+    given-names: Muhammad Afan
+  - family-names: Luqman
+    given-names: Hassan
+abstract: "Research source code for shared and private Aho-Corasick matching with OpenMP and single-host MPI."
+keywords:
+  - Aho-Corasick
+  - OpenMP
+  - MPI
+  - pattern matching
+  - parallel computing

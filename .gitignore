@@ -1,0 +1,9 @@
+build/
+build-*/
+data/demo/
+data/runs/
+results/
+*.exe
+*.o
+__pycache__/
+.pytest_cache/
